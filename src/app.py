@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 import joblib
 import tensorflow as tf
 import json
+import os
 
 model = tf.keras.models.load_model("model/model.keras")
 vectorizer = joblib.load("model/vectoriseur.joblib")
@@ -11,12 +12,15 @@ with open("model/metrics.json", "r", encoding="utf-8") as f:
 
 app = FastAPI()
 
+COMMIT_HASH = os.getenv("COMMIT_HASH", "inconnu")
+
 # Fonction pour health
 @app.get("/health")
 def health_check():
     return {
         "status": "ok",
-        "model_version": metrics.get("version", "1.0")
+        "model_version": metrics.get("version", "1.0"),
+        "commit": COMMIT_HASH
     }
 
 

@@ -4,6 +4,10 @@ FROM python:3.13-slim
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
+# Récupérer le hash du commit passé par le workflow GitHub Actions
+ARG COMMIT_HASH="inconnu"
+ENV COMMIT_HASH=$COMMIT_HASH
+
 # Copier et installer les dépendances en premier (pour optimiser le cache Docker)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

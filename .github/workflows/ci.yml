@@ -43,10 +43,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Étape 2 : Construire l'image Docker de l'API
+      # Étape 2 : Construire l'image Docker de l'API en injectant le SHA du commit comme build-arg
       - name: Build Docker image
         run: |
-          docker build -t film-classifier-api .
+          docker build --build-arg COMMIT_HASH=${{ github.sha }} -t film-classifier-api .
 
       # Étape 3 : Démarrer le conteneur en arrière-plan pour vérifier qu'il tourne
       - name: Run Docker container
@@ -78,14 +78,14 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      # Étape 3 : Construire, étiqueter avec le SHA du commit et pousser l'image sur ACR
+      # Étape 3 : Construire, injecter le SHA du commit, étiqueter et pousser l'image sur ACR
       - name: Build, tag, and push image to ACR
         run: |
           # Définition du tag de l'image avec l'adresse du registre et l'identifiant du commit
           IMAGE_TAG="${{ secrets.ACR_REGISTRY }}/film-classifier:${{ github.sha }}"
           
-          # Construction de l'image avec ce tag spécifique
-          docker build -t $IMAGE_TAG .
+          # Construction de l'image avec le tag spécifique et transmission du COMMIT_HASH
+          docker build --build-arg COMMIT_HASH=${{ github.sha }} -t $IMAGE_TAG .
           
           # Envoi de l'image sur le registre Azure
           docker push $IMAGE_TAG

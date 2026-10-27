@@ -58,4 +58,4 @@ jobs:
       # Étape 4 : Vérifier que l'API répond correctement (test de santé basique)
       - name: Test container health
         run: |
-          curl --fail http://localhost:8000/ || exit 1
+          curl --fail http://localhost:8000/docs || exit 1

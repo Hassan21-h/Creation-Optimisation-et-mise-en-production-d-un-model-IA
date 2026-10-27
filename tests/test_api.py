@@ -42,8 +42,8 @@ def test_model_metrics_threshold():
     with open(metrics_path, "r", encoding="utf-8") as f:
         metrics = json.load(f)
     
-    # On cherche la clé du score F1 (souvent nommée 'f1', 'f1_score' ou 'f1-score')
-    f1_score = metrics.get("f1") or metrics.get("f1_score") or metrics.get("macro avg", {}).get("f1-score", 0.0)
+    # On récupère directement la clé test_f1_score
+    f1_score = metrics.get("test_f1_score", 0.0)    
     
     # Seuil minimal exigé
     assert f1_score >= 0.5, f"Le score F1 ({f1_score}) est inférieur au seuil minimal de 0.5"

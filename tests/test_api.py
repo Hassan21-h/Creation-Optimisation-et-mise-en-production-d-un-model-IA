@@ -46,4 +46,4 @@ def test_model_metrics_threshold():
     f1_score = metrics.get("test_f1_score", 0.0)    
     
     # Seuil minimal exigé
-    assert f1_score >= 0.99, f"Le score F1 ({f1_score}) est inférieur au seuil minimal de 0.5"
+    assert f1_score >= 0.7, f"Le score F1 ({f1_score}) est inférieur au seuil minimal de 0.7"

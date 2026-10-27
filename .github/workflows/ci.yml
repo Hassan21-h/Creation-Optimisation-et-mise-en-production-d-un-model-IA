@@ -31,7 +31,7 @@ jobs:
       # Étape 4 : Lancer les tests et la barrière de qualité
       - name: Run tests & quality gate
         run: |
-          pytest
+          PYTHONPATH=. pytest
 
   # 2. Second job : Construction de l'image Docker et vérification du démarrage
   # Ne se lance QUE si le job 'test' s'est terminé avec succès grâce à 'needs'
@@ -55,7 +55,37 @@ jobs:
           # Petite pause pour laisser le temps à l'application de démarrer et charger le modèle
           sleep 5
 
-      # Étape 4 : Vérifier que l'API répond correctement (test de santé basique)
+      # Étape 4 : Vérifier que l'API répond correctement (test de santé basique sur la documentation)
       - name: Test container health
         run: |
           curl --fail http://localhost:8000/docs || exit 1
+
+  # 3. Troisième job : Connexion au registre Azure et publication de l'image
+  # Ne se lance QUE si le job 'image' s'est terminé avec succès
+  publier:
+    needs: image
+    runs-on: ubuntu-latest
+    steps:
+      # Étape 1 : Récupérer le code source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Étape 2 : Se connecter à Azure Container Registry (ACR) via les secrets GitHub
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # Étape 3 : Construire, étiqueter avec le SHA du commit et pousser l'image sur ACR
+      - name: Build, tag, and push image to ACR
+        run: |
+          # Définition du tag de l'image avec l'adresse du registre et l'identifiant du commit
+          IMAGE_TAG="${{ secrets.ACR_REGISTRY }}/film-classifier:${{ github.sha }}"
+          
+          # Construction de l'image avec ce tag spécifique
+          docker build -t $IMAGE_TAG .
+          
+          # Envoi de l'image sur le registre Azure
+          docker push $IMAGE_TAG

@@ -38,5 +38,9 @@ def predict_movie(text):
         "model_version" : metrics.get("version", "1.0")
     }
 
-
 # Lancer avec uvicorn src.app:app --reload
+
+# Fonction pour test hello
+@app.get("/hello")
+def say_hello():
+    return {"message": "Hello depuis le conteneur Azure !"}

@@ -1,36 +1,21 @@
-# Python
+# Python & Compilations
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
 *.egg
 
 # Environnements virtuels
 .venv/
 venv/
-ENV/
 env/
 
-# Caches de tests
+# Caches de tests et d'outils
 .pytest_cache/
-.mypy_cache/
-.tox/
 .cache/
+tuner_dossier/
 
 # IDEs et OS
 .vscode/
